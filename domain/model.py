@@ -2,7 +2,7 @@
 # @Time    : 9/27/2021 10:14 AM
 # @Author  : Kamal SELVAM
 # @Email   : kamal.selvam@orange.com
-# @File    : models.py.py
+# @File    : model.py.py
 
 
 from __future__ import annotations
@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Optional, List, Set
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class OrderLine:
     orderid: str
     sku: str
