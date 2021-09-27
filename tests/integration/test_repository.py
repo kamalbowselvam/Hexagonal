@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# @Time    : 9/27/2021 4:59 PM
-# @Author  : Kamal SELVAM
-# @Email   : kamal.selvam@orange.com
-# @File    : test_repository.py.py
-
+# pylint: disable=protected-access
 from domain import model
 from adapters import repository
 

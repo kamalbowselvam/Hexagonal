@@ -1,27 +1,15 @@
-# -*- coding: utf-8 -*-
-# @Time    : 9/27/2021 10:14 AM
-# @Author  : Kamal SELVAM
-# @Email   : kamal.selvam@orange.com
-# @File    : model.py.py
-
-
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from typing import Optional, List, Set
 
-@dataclass(unsafe_hash=True)
-class OrderLine:
-    orderid: str
-    sku: str
-    qty: int
 
 class OutOfStock(Exception):
     pass
 
+
 def allocate(line: OrderLine, batches: List[Batch]) -> str:
     try:
-
         batch = next(b for b in sorted(batches) if b.can_allocate(line))
         batch.allocate(line)
         return batch.reference
@@ -29,14 +17,20 @@ def allocate(line: OrderLine, batches: List[Batch]) -> str:
         raise OutOfStock(f"Out of stock for sku {line.sku}")
 
 
+@dataclass(unsafe_hash=True)
+class OrderLine:
+    orderid: str
+    sku: str
+    qty: int
+
+
 class Batch:
-    def __init__(self, ref: str, sku:str, qty: int, eta: Optional[date]):
+    def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]):
         self.reference = ref
         self.sku = sku
         self.eta = eta
         self._purchased_quantity = qty
-        self._allocations = set()
-
+        self._allocations = set()  # type: Set[OrderLine]
 
     def __repr__(self):
         return f"<Batch {self.reference}>"
@@ -55,7 +49,6 @@ class Batch:
         if other.eta is None:
             return True
         return self.eta > other.eta
-
 
     def allocate(self, line: OrderLine):
         if self.can_allocate(line):

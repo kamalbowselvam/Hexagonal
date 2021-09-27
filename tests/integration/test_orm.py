@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-# @Time    : 9/27/2021 3:36 PM
-# @Author  : Kamal SELVAM
-# @Email   : kamal.selvam@orange.com
-# @File    : test_orm.py.py
 from domain import model
-from datetime import  date
+from datetime import date
 
 
 def test_orderline_mapper_can_load_lines(session):
@@ -14,15 +9,12 @@ def test_orderline_mapper_can_load_lines(session):
         '("order1", "RED-TABLE", 13),'
         '("order2", "BLUE-LIPSTICK", 14)'
     )
-
     expected = [
         model.OrderLine("order1", "RED-CHAIR", 12),
         model.OrderLine("order1", "RED-TABLE", 13),
         model.OrderLine("order2", "BLUE-LIPSTICK", 14),
     ]
-
     assert session.query(model.OrderLine).all() == expected
-
 
 
 def test_orderline_mapper_can_save_lines(session):
@@ -32,7 +24,6 @@ def test_orderline_mapper_can_save_lines(session):
 
     rows = list(session.execute('SELECT orderid, sku, qty FROM "order_lines"'))
     assert rows == [("order1", "DECORATIVE-WIDGET", 12)]
-
 
 
 def test_retrieving_batches(session):
@@ -70,3 +61,29 @@ def test_saving_allocations(session):
     session.commit()
     rows = list(session.execute('SELECT orderline_id, batch_id FROM "allocations"'))
     assert rows == [(batch.id, line.id)]
+
+
+def test_retrieving_allocations(session):
+    session.execute(
+        'INSERT INTO order_lines (orderid, sku, qty) VALUES ("order1", "sku1", 12)'
+    )
+    [[olid]] = session.execute(
+        "SELECT id FROM order_lines WHERE orderid=:orderid AND sku=:sku",
+        dict(orderid="order1", sku="sku1"),
+    )
+    session.execute(
+        "INSERT INTO batches (reference, sku, _purchased_quantity, eta)"
+        ' VALUES ("batch1", "sku1", 100, null)'
+    )
+    [[bid]] = session.execute(
+        "SELECT id FROM batches WHERE reference=:ref AND sku=:sku",
+        dict(ref="batch1", sku="sku1"),
+    )
+    session.execute(
+        "INSERT INTO allocations (orderline_id, batch_id) VALUES (:olid, :bid)",
+        dict(olid=olid, bid=bid),
+    )
+
+    batch = session.query(model.Batch).one()
+
+    assert batch._allocations == {model.OrderLine("order1", "sku1", 12)}

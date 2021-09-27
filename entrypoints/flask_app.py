@@ -1,17 +1,11 @@
-# -*- coding: utf-8 -*-
-# @Time    : 9/27/2021 9:13 PM
-# @Author  : Kamal SELVAM
-# @Email   : kamal.selvam@orange.com
-# @File    : flask_app.py.py
-
 from datetime import datetime
 from flask import Flask, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from domain import model
-from adapters import repository, orm
 import config
+from domain import model
+from adapters import orm, repository
 from service_layer import services
 
 orm.start_mappers()
@@ -36,18 +30,20 @@ def add_batch():
     )
     return "OK", 201
 
-@app.route("/allocate",methods=["POST"])
+
+@app.route("/allocate", methods=["POST"])
 def allocate_endpoint():
     session = get_session()
     repo = repository.SqlAlchemyRepository(session)
-    line = model.OrderLine(
-        request.json["orderid"], request.json["sku"], request.json["qty"]
-    )
-
-
     try:
-        batchref = services.allocate(line, repo, session)
+        batchref = services.allocate(
+            request.json["orderid"],
+            request.json["sku"],
+            request.json["qty"],
+            repo,
+            session,
+        )
     except (model.OutOfStock, services.InvalidSku) as e:
-        return {"message":str(e)}, 400
+        return {"message": str(e)}, 400
 
     return {"batchref": batchref}, 201

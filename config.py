@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 9/27/2021 9:15 PM
-# @Author  : Kamal SELVAM
-# @Email   : kamal.selvam@orange.com
-# @File    : config.py.py
 import os
 
 
@@ -17,4 +12,6 @@ def get_postgres_uri():
 def get_api_url():
     host = os.environ.get("API_HOST", "localhost")
     port = 5005 if host == "localhost" else 80
-    return f"http://{host}:{port}"
+    url = f"http://{host}:{port}"
+    print(url)
+    return url

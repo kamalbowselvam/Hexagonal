@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 9/27/2021 4:37 PM
-# @Author  : Kamal SELVAM
-# @Email   : kamal.selvam@orange.com
-# @File    : repository.py.py
 import abc
 from domain import model
 
@@ -12,15 +7,12 @@ class AbstractRepository(abc.ABC):
     def add(self, batch: model.Batch):
         raise NotImplementedError
 
-
     @abc.abstractmethod
-    def get(self,reference) -> model.Batch:
+    def get(self, reference) -> model.Batch:
         raise NotImplementedError
 
 
-
 class SqlAlchemyRepository(AbstractRepository):
-
     def __init__(self, session):
         self.session = session
 
