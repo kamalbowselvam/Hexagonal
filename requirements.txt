@@ -8,4 +8,3 @@ pytest
 pytest-icdiff
 mypy
 requests
-
