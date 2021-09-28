@@ -4,16 +4,13 @@ from datetime import date
 from typing import Optional, List, Set
 from . import events
 
-class OutOfStock(Exception):
-    pass
-
 
 class Product:
     def __init__(self, sku: str, batches: List[Batch], version_number: int = 0):
         self.sku = sku
         self.batches = batches
         self.version_number = version_number
-        self.events = []  #type : List[events.Event]
+        self.events = []  # type: List[events.Event]
 
     def allocate(self, line: OrderLine) -> str:
         try:

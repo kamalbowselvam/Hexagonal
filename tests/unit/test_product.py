@@ -1,7 +1,8 @@
 from datetime import date, timedelta
-import pytest
-from src.allocation.domain.model import Product, OrderLine, Batch, OutOfStock
-from src.allocation.domain import events
+from allocation.domain import events
+from allocation.domain.model import Product, OrderLine, Batch
+
+
 today = date.today()
 tomorrow = today + timedelta(days=1)
 later = tomorrow + timedelta(days=10)
@@ -60,7 +61,3 @@ def test_increments_version_number():
     product.version_number = 7
     product.allocate(line)
     assert product.version_number == 8
-
-
-
-
