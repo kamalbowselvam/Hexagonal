@@ -44,4 +44,3 @@ def test_allocation_is_idempotent():
     batch.allocate(line)
     batch.allocate(line)
     assert batch.available_quantity == 18
-    
